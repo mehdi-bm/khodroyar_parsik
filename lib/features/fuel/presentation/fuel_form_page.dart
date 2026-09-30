@@ -6,6 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/grouped_number_input.dart';
 import '../../../core/utils/decimal_input.dart';
 import '../../../core/utils/persian_date.dart';
+import '../../../core/utils/persian_digits.dart';
 import '../../../core/widgets/date_field.dart';
 import '../../../core/widgets/form_load_error.dart';
 import '../cubit/fuel_form_cubit.dart';
@@ -89,7 +90,9 @@ class _FuelFormPageState extends State<FuelFormPage> {
         if (record != null) {
           _date = record.date;
           _mileageController.text = formatGroupedDigits('${record.mileage}');
-          _fuelAmountController.text = record.fuelAmountLiters.toString();
+          _fuelAmountController.text = toPersianDigits(
+            record.fuelAmountLiters.toString(),
+          );
           _totalCostController.text = formatGroupedDigits(
             '${record.totalCost}',
           );
@@ -200,6 +203,7 @@ class _FuelFormPageState extends State<FuelFormPage> {
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
+                          inputFormatters: [PersianDigitsInputFormatter()],
                           validator: FuelValidators.fuelAmount,
                         ),
                         const SizedBox(height: AppSpacing.md),

@@ -53,6 +53,9 @@ Future<DateTime?> pickJalaliDate({
   required DateTime firstDate,
   required DateTime lastDate,
 }) async {
+  // Otherwise the text field focused before opening the picker regains focus
+  // when the dialog closes and the keyboard pops back up over the form.
+  FocusManager.instance.primaryFocus?.unfocus();
   final picked = await showPersianDatePicker(
     context: context,
     initialDate: Jalali.fromDateTime(initialDate),

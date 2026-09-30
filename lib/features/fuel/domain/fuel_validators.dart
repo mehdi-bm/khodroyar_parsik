@@ -5,7 +5,8 @@ import '../../../core/utils/decimal_input.dart';
 /// matching the app's rule against exposing raw/technical errors. Mileage
 /// and totalCost use [GroupedNumberInputFormatter] (grouped, Persian
 /// digits), so their raw text goes through [ungroupDigits] first;
-/// fuelAmount is a decimal field and stays plain Latin numeric input.
+/// fuelAmount is a decimal field (Persian digits, no grouping), normalized
+/// through [normalizeDecimalInput].
 abstract final class FuelValidators {
   static String? mileage(
     String? value, {

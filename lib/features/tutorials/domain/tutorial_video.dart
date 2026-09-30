@@ -19,11 +19,11 @@ class TutorialVideo {
   Uri get url => Uri.parse('$tutorialVideosBaseUrl$fileName');
 }
 
-/// Public GitHub repo hosting the recordings — streamed on demand so they
-/// don't bloat the APK. raw.githubusercontent.com is reachable from Iran
-/// without a VPN.
+/// `tutorials/videos/` in the app's public GitHub repo — streamed on demand
+/// so they don't bloat the APK. raw.githubusercontent.com is reachable from
+/// Iran without a VPN.
 const String tutorialVideosBaseUrl =
-    'https://raw.githubusercontent.com/mehdi-bm/khodroyar-parsik-tutorials/main/videos/';
+    'https://raw.githubusercontent.com/mehdi-bm/khodroyar_parsik/main/tutorials/videos/';
 
 const List<TutorialVideo> tutorialVideos = [
   TutorialVideo(

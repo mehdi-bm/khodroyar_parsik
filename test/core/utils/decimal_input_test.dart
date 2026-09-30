@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:caryar/core/utils/decimal_input.dart';
 import 'package:caryar/features/fuel/domain/fuel_validators.dart';
@@ -16,6 +17,19 @@ void main() {
       expect(FuelValidators.fuelAmount('12abc'), isNotNull);
     },
   );
+  test('decimal fields display Persian digits and still parse back', () {
+    final formatted = PersianDigitsInputFormatter().formatEditUpdate(
+      TextEditingValue.empty,
+      const TextEditingValue(
+        text: '35.5',
+        selection: TextSelection.collapsed(offset: 4),
+      ),
+    );
+    expect(formatted.text, '۳۵.۵');
+    expect(formatted.selection.baseOffset, 4);
+    expect(double.parse(normalizeDecimalInput(formatted.text)), 35.5);
+    expect(FuelValidators.fuelAmount(formatted.text), isNull);
+  });
   test(
     'Persian model years are accepted, malformed numeric fields are rejected',
     () {
