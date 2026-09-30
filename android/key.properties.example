@@ -1,0 +1,6 @@
+# Copy to key.properties. Keep your real signing key and passwords private.
+# Use forward slashes in Windows paths. Paths are relative to android/.
+storeFile=C:/path/to/your-release-key.jks
+storePassword=YOUR_STORE_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+keyPassword=YOUR_KEY_PASSWORD
