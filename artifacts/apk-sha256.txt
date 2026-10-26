@@ -1,4 +1,9 @@
 
+
 Algorithm : SHA256
-Hash      : 4733573DED9B076BF15F0C2E03F2FAA8D6CA943411A381DA848147FB1695FB86
-Path      : artifacts\khodroyar-bazaar-1.0.1.apk
+Hash      : CB7C7DDA56811B268D9D0DCA64BCF1AC976F7D24D34ADA6CBCAD5E404C976529
+Path      : artifacts/khodroyar-bazaar-1.0.2.apk
+
+
+
+

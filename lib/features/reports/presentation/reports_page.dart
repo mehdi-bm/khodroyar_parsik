@@ -108,7 +108,7 @@ class _ReportsBodyState extends State<_ReportsBody> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(filePath)],
-          text: 'گزارش خودرویار پارسیک — ${widget.vehicle.name}',
+          text: 'گزارش خودرویار — ${widget.vehicle.name}',
         ),
       );
     } catch (_) {

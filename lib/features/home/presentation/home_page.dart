@@ -10,7 +10,7 @@ import '../../../core/utils/number_format.dart';
 import '../../../core/widgets/empty_state_icon.dart';
 import '../../advertising/cubit/ad_banner_cubit.dart';
 import '../../advertising/data/advertising_gateway.dart';
-import '../../advertising/presentation/widgets/ad_banner_carousel.dart';
+import '../../advertising/presentation/widgets/ad_banner_strip.dart';
 import '../../vehicles/cubit/active_vehicle_cubit.dart';
 import '../../vehicles/cubit/active_vehicle_state.dart';
 import 'widgets/fuel_summary_card.dart';
@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('خودرویار پارسیک')),
+      appBar: AppBar(title: const Text('خودرویار')),
       // The ad banner is provided at the page level (not inside
       // _Dashboard) so it stays mounted — and its 20-minute fetch cache
       // stays warm — regardless of which vehicle is active or whether one
@@ -35,7 +35,6 @@ class HomePage extends StatelessWidget {
             AdBannerCubit(getIt<AdvertisingGateway>())..loadInitial(),
         child: Column(
           children: [
-            const AdBannerCarousel(),
             Expanded(
               child: BlocBuilder<ActiveVehicleCubit, ActiveVehicleState>(
                 builder: (context, state) {
@@ -52,6 +51,7 @@ class HomePage extends StatelessWidget {
                 },
               ),
             ),
+            const AdBannerStrip(),
           ],
         ),
       ),

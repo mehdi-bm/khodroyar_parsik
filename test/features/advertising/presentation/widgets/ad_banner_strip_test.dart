@@ -8,7 +8,7 @@ import 'package:caryar/core/di/service_locator.dart';
 import 'package:caryar/features/advertising/cubit/ad_banner_cubit.dart';
 import 'package:caryar/features/advertising/data/install_id_repository.dart';
 import 'package:caryar/features/advertising/domain/ad_banner.dart';
-import 'package:caryar/features/advertising/presentation/widgets/ad_banner_carousel.dart';
+import 'package:caryar/features/advertising/presentation/widgets/ad_banner_strip.dart';
 
 import '../../../../support/fake_advertising_gateway.dart';
 
@@ -37,7 +37,12 @@ Widget _wrap(AdBannerCubit cubit) {
     home: Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        body: BlocProvider.value(value: cubit, child: const AdBannerCarousel()),
+        body: Column(
+          children: [
+            const Expanded(child: SizedBox()),
+            BlocProvider.value(value: cubit, child: const AdBannerStrip()),
+          ],
+        ),
       ),
     ),
   );
@@ -54,7 +59,7 @@ void main() {
     await getIt.reset();
   });
 
-  testWidgets('shows a loading placeholder while the first fetch is pending', (
+  testWidgets('takes no space while the first fetch is pending', (
     tester,
   ) async {
     final gateway = FakeAdvertisingGateway();
@@ -65,10 +70,7 @@ void main() {
     await tester.pumpWidget(_wrap(cubit));
     await tester.pump();
 
-    expect(
-      find.byKey(const ValueKey('ad_loading_placeholder')),
-      findsOneWidget,
-    );
+    expect(tester.getSize(find.byType(AdBannerStrip)).height, 0);
 
     completer.complete();
     await tester.pumpAndSettle();
@@ -85,15 +87,11 @@ void main() {
     await cubit.loadInitial();
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('ad_loading_placeholder')), findsNothing);
-    expect(find.byKey(const ValueKey('ad_load_error')), findsNothing);
-    expect(find.byKey(const ValueKey('ad_banner_page_view')), findsNothing);
+    expect(tester.getSize(find.byType(AdBannerStrip)).height, 0);
     await cubit.close();
   });
 
-  testWidgets('shows an error message with a retry button on failure', (
-    tester,
-  ) async {
+  testWidgets('stays out of the way on a failed fetch', (tester) async {
     final gateway = FakeAdvertisingGateway()..fetchError = Exception('boom');
     final cubit = AdBannerCubit(gateway);
 
@@ -101,35 +99,21 @@ void main() {
     await cubit.loadInitial();
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('ad_load_error')), findsOneWidget);
-    expect(find.text('دریافت تبلیغات ناموفق بود'), findsOneWidget);
+    expect(tester.getSize(find.byType(AdBannerStrip)).height, 0);
+    expect(find.text('دریافت تبلیغات ناموفق بود'), findsNothing);
 
+    // A later successful refresh (pull-to-refresh / app resume) brings it
+    // back.
     gateway.fetchError = null;
     gateway.bannersToReturn = [_banner('a')];
-    await tester.tap(find.byKey(const ValueKey('ad_retry_button')));
+    await cubit.refresh(force: true);
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('ad_load_error')), findsNothing);
-    expect(find.byKey(const ValueKey('ad_banner_page_view')), findsOneWidget);
-    await cubit.close();
-  });
-
-  testWidgets('renders each banner keyed by its bannerId', (tester) async {
-    final gateway = FakeAdvertisingGateway()
-      ..bannersToReturn = [_banner('a'), _banner('b')];
-    final cubit = AdBannerCubit(gateway);
-
-    await tester.pumpWidget(_wrap(cubit));
-    await cubit.loadInitial();
-    await tester.pumpAndSettle();
-
-    expect(find.byKey(const ValueKey('ad_banner_page_view')), findsOneWidget);
     expect(find.byKey(const ValueKey('ad_banner_a')), findsOneWidget);
-    expect(find.text('عنوان a'), findsOneWidget);
     await cubit.close();
   });
 
-  testWidgets('auto-slide advances to the next page after the interval', (
+  testWidgets('shows a single compact banner with its ad label', (
     tester,
   ) async {
     final gateway = FakeAdvertisingGateway()
@@ -140,12 +124,46 @@ void main() {
     await cubit.loadInitial();
     await tester.pumpAndSettle();
 
-    expect(cubit.state.currentIndex, 0);
+    expect(find.byKey(const ValueKey('ad_banner_a')), findsOneWidget);
+    expect(find.byKey(const ValueKey('ad_banner_b')), findsNothing);
+    expect(find.text('عنوان a'), findsOneWidget);
+    expect(find.text('تبلیغ'), findsOneWidget);
+    expect(tester.getSize(find.byType(AdBannerStrip)).height, lessThan(80));
+    await cubit.close();
+  });
 
-    await tester.pump(const Duration(seconds: 5));
+  testWidgets('never rotates on its own while visible', (tester) async {
+    final gateway = FakeAdvertisingGateway()
+      ..bannersToReturn = [_banner('a'), _banner('b')];
+    final cubit = AdBannerCubit(gateway);
+
+    await tester.pumpWidget(_wrap(cubit));
+    await cubit.loadInitial();
     await tester.pumpAndSettle();
 
-    expect(cubit.state.currentIndex, 1);
+    await tester.pump(const Duration(minutes: 1));
+
+    expect(cubit.state.currentIndex, 0);
+    expect(find.byKey(const ValueKey('ad_banner_a')), findsOneWidget);
+    await cubit.close();
+  });
+
+  testWidgets('shows the next banner when the app returns to foreground', (
+    tester,
+  ) async {
+    final gateway = FakeAdvertisingGateway()
+      ..bannersToReturn = [_banner('a'), _banner('b')];
+    final cubit = AdBannerCubit(gateway);
+
+    await tester.pumpWidget(_wrap(cubit));
+    await cubit.loadInitial();
+    await tester.pumpAndSettle();
+
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('ad_banner_b')), findsOneWidget);
     await cubit.close();
   });
 
@@ -189,22 +207,4 @@ void main() {
       await cubit.close();
     },
   );
-
-  testWidgets('disposing the carousel stops the auto-slide timer', (
-    tester,
-  ) async {
-    final gateway = FakeAdvertisingGateway()
-      ..bannersToReturn = [_banner('a'), _banner('b')];
-    final cubit = AdBannerCubit(gateway);
-
-    await tester.pumpWidget(_wrap(cubit));
-    await cubit.loadInitial();
-    await tester.pumpAndSettle();
-
-    // Replacing the widget tree disposes AdBannerCarousel's State, which
-    // must cancel its Timer.periodic — flutter_test fails the test if a
-    // pending timer is still alive when it ends.
-    await tester.pumpWidget(const SizedBox());
-    await cubit.close();
-  });
 }

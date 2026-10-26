@@ -4,7 +4,7 @@ import '../data/advertising_gateway.dart';
 import '../domain/ad_banner.dart';
 import 'ad_banner_state.dart';
 
-/// Drives the home-page ad banner carousel: fetches active banners, caches
+/// Drives the home-page ad banner strip: fetches active banners, caches
 /// a successful result for [AdBannerState.cacheTtl], and de-duplicates
 /// concurrent refresh/click attempts.
 class AdBannerCubit extends Cubit<AdBannerState> {

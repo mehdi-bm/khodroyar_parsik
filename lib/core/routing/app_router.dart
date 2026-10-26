@@ -21,6 +21,7 @@ import '../../features/reference/presentation/warning_lights_page.dart';
 import '../../features/reports/presentation/reports_page.dart';
 import '../../features/tutorials/presentation/tutorial_player_page.dart';
 import '../../features/tutorials/presentation/tutorials_page.dart';
+import '../../features/other_apps/presentation/other_apps_page.dart';
 import '../../features/settings/presentation/privacy_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/timeline/presentation/timeline_page.dart';
@@ -129,6 +130,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.advertisingRequest,
       builder: (context, state) => const AdvertisingRequestPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.otherApps,
+      builder: (context, state) => const OtherAppsPage(),
     ),
     GoRoute(
       path: AppRoutes.timeline,

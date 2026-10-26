@@ -92,7 +92,7 @@ class PdfReportBuilder {
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
-          _t('گزارش خودرویار پارسیک'),
+          _t('گزارش خودرویار'),
           style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
         ),
         pw.SizedBox(height: 4),

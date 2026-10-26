@@ -69,7 +69,7 @@ class CarYarApp extends StatelessWidget {
             SettingsLoaded(:final themeMode) => themeMode.themeMode,
           };
           return MaterialApp.router(
-            title: 'خودرویار پارسیک',
+            title: 'خودرویار',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light(),
             darkTheme: AppTheme.dark(),

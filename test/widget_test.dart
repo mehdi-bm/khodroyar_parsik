@@ -8,7 +8,7 @@ import 'package:caryar/core/di/service_locator.dart';
 import 'package:caryar/core/notifications/notification_sink.dart';
 import 'package:caryar/core/routing/app_router.dart';
 import 'package:caryar/core/routing/app_routes.dart';
-import 'package:caryar/features/advertising/presentation/widgets/ad_banner_carousel.dart';
+import 'package:caryar/features/advertising/presentation/widgets/ad_banner_strip.dart';
 import 'package:caryar/features/documents/data/document_repository.dart';
 import 'package:caryar/features/expenses/data/expense_repository.dart';
 import 'package:caryar/features/fuel/data/fuel_repository.dart';
@@ -34,7 +34,7 @@ void main() {
     // that call resolves instantly instead of hitting a real platform
     // channel with nothing to answer it.
     PackageInfo.setMockInitialValues(
-      appName: 'خودرویار پارسیک',
+      appName: 'خودرویار',
       packageName: 'com.parsik.caryar',
       version: '1.0.0',
       buildNumber: '1',
@@ -60,7 +60,7 @@ void main() {
     await tester.pumpWidget(const CarYarApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('خودرویار پارسیک'), findsOneWidget);
+    expect(find.text('خودرویار'), findsOneWidget);
     expect(find.text('برای شروع، یک خودرو اضافه کنید'), findsOneWidget);
 
     final directionality = tester.widget<Directionality>(
@@ -595,6 +595,10 @@ void main() {
       200,
       scrollable: find.byType(Scrollable),
     );
+    // scrollUntilVisible stops once the row is built in the cache extent,
+    // which can still be behind the bottom navigation bar.
+    await tester.ensureVisible(find.text('حریم خصوصی'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('حریم خصوصی'));
     await tester.pumpAndSettle();
 
@@ -606,16 +610,42 @@ void main() {
   });
 
   testWidgets(
-    'home page hosts the advertising carousel even before adding a vehicle',
+    'home page hosts the advertising strip even before adding a vehicle',
     (WidgetTester tester) async {
       await tester.pumpWidget(const CarYarApp());
       await tester.pumpAndSettle();
 
-      expect(find.byType(AdBannerCarousel), findsOneWidget);
+      expect(find.byType(AdBannerStrip), findsOneWidget);
 
       await getIt<AppDatabase>().close();
     },
   );
+
+  testWidgets('settings has an other-apps entry that opens its page', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CarYarApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('تنظیمات'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('settings_other_apps_entry')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(
+      find.byKey(const Key('settings_other_apps_entry')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('settings_other_apps_entry')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('other_apps_grid')), findsOneWidget);
+
+    await getIt<AppDatabase>().close();
+  });
 
   testWidgets(
     'settings has error-report and advertising-request entries that open '

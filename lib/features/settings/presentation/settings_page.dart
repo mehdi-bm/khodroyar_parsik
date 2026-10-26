@@ -421,6 +421,13 @@ class _AboutSection extends StatelessWidget {
           },
         ),
         ListTile(
+          key: const Key('settings_other_apps_entry'),
+          title: const Text('سایر اپلیکیشن‌های کاربردی'),
+          subtitle: const Text('محصولات دیگر پارسیک در کافه‌بازار'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push(AppRoutes.otherApps),
+        ),
+        ListTile(
           title: const Text('حریم خصوصی'),
           // Icons.chevron_left has IconData.matchTextDirection: true, so
           // Flutter auto-mirrors it under RTL — using the "left" variant

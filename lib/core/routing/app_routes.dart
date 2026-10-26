@@ -7,14 +7,14 @@ abstract final class AppRoutes {
   static const String privacy = '/settings/privacy';
   static const String errorReport = '/settings/error-report';
   static const String advertisingRequest = '/settings/advertising-request';
+  static const String otherApps = '/settings/other-apps';
 
   static const String more = '/more';
   static const String timeline = '/more/timeline';
   static const String parking = '/more/parking';
   static const String warningLights = '/more/warning-lights';
   static const String troubleshooting = '/more/troubleshooting';
-  static const String _troubleshootingDetailBase =
-      '/more/troubleshooting';
+  static const String _troubleshootingDetailBase = '/more/troubleshooting';
   static String troubleshootingDetail(String symptomId) =>
       '$_troubleshootingDetailBase/$symptomId';
   static const String pretripChecklist = '/more/pretrip-checklist';

@@ -1,8 +1,8 @@
-# انتشار خودرویار پارسیک
+# انتشار خودرویار
 
-نام بسته: `com.parsik.caryar`، نسخه: `1.0.1+2`.
+نام بسته: `com.parsik.caryar`، نسخه: `1.0.2+3`.
 
-فایل آماده بارگذاری این بررسی: `artifacts/khodroyar-bazaar-1.0.1.apk`.
+فایل آماده بارگذاری این بررسی: `artifacts/khodroyar-bazaar-1.0.2.apk`.
 فایل `artifacts/khodroyar-preview.apk` برای آزمایش روی گوشی است و نباید در بازار بارگذاری شود.
 آیکن فروشگاه: `artifacts/bazaar-icon-512.png`.
 
